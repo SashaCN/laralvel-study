@@ -18,9 +18,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id_marketplace',
         'name',
+        'surname',
         'email',
+        'phone',
         'password',
+        'id_role'
     ];
 
     /**
@@ -42,4 +46,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    const ROLE_ADMIN = 0;
+    const ROLE_SELLER = 1;
+
+    public function getRole ()
+    {
+        return [
+            self::ROLE_ADMIN => 'Адмін',
+            self::ROLE_SELLER => 'Продавець',
+        ];
+    }
 }

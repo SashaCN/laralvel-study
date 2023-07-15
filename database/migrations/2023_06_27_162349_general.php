@@ -20,35 +20,18 @@ return new class extends Migration
             $table->softDeletes('deleted_at');
         });
 
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id('id_role');
-            $table->string('name');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('sellers', function (Blueprint $table) {
-            $table->id('id_seller');
-            $table->foreignId('id_marketplace')->constrained('marketplaces', 'id_marketplace');
-            $table->foreignId('id_role')->constrained('roles', 'id_role');
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
             $table->string('name');
             $table->string('surname');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->bigInteger('phone');
+            $table->unsignedSmallInteger('id_role')->nullable();
+            $table->foreignId('id_marketplace')->constrained('marketplaces', 'id_marketplace')->nullable();
+            $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
-            $table->softDeletes('deleted_at');
-        });
-
-        Schema::create('clients', function (Blueprint $table) {
-            $table->id('id_client');
-            $table->foreignId('id_role')->constrained('roles', 'id_role');
-            $table->string('name');
-            $table->string('surname');
-            $table->string('address');
-            $table->string('email')->unique();
-            $table->bigInteger('phone');
-            $table->timestamps();
-            $table->softDeletes('deleted_at');
         });
 
         Schema::create('categories', function (Blueprint $table) {
@@ -85,7 +68,7 @@ return new class extends Migration
             $table->foreignId('id_producer')->constrained('producers', 'id_producer');
             $table->foreignId('id_category')->constrained('categories', 'id_category');
             $table->foreignId('id_subcategory')->constrained('subcategories', 'id_subcategory');
-            $table->foreignId('id_seller')->constrained('sellers', 'id_seller')->cascadeOnDelete();
+            $table->foreignId('id_user')->constrained('users');
             $table->timestamps();
             $table->softDeletes('deleted_at');
         });
@@ -100,7 +83,7 @@ return new class extends Migration
 
         Schema::create('comments', function (Blueprint $table) {
             $table->id('id_comment');
-            $table->foreignId('id_client')->constrained('clients', 'id_client');
+            $table->foreignId('id_user')->constrained('users');
             $table->foreignId('id_product')->constrained('products', 'id_product');
             $table->float('mark');
             $table->string('comment');
@@ -110,7 +93,7 @@ return new class extends Migration
 
         Schema::create('orders', function (Blueprint $table) {
             $table->id('id_order');
-            $table->foreignId('id_client')->constrained('clients', 'id_client');
+            $table->foreignId('id_user')->constrained('users');
             $table->dateTime('date');
             $table->string('status');
             $table->timestamps();
@@ -140,22 +123,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes('deleted_at');
         });
-
-        Schema::create('client_passwords', function (Blueprint $table) {
-            $table->id('id_client_password');
-            $table->foreignId('id_client')->constrained('clients', 'id_client');
-            $table->string('password');
-            $table->timestamps();
-            $table->softDeletes('deleted_at');
-        });
-
-        Schema::create('seller_passwords', function (Blueprint $table) {
-            $table->id('id_seller_password');
-            $table->foreignId('id_seller')->constrained('sellers', 'id_seller');
-            $table->string('password');
-            $table->timestamps();
-            $table->softDeletes('deleted_at');
-        });
     }
 
     /**
@@ -164,8 +131,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('order_details');
-        Schema::dropIfExists('seller_passwords');
-        Schema::dropIfExists('client_passwords');
         Schema::dropIfExists('category_attributes');
         Schema::dropIfExists('product_attributes');
         Schema::dropIfExists('attributes');
@@ -176,9 +141,7 @@ return new class extends Migration
         Schema::dropIfExists('producers');
         Schema::dropIfExists('subcategories');
         Schema::dropIfExists('categories');
-        Schema::dropIfExists('clients');
-        Schema::dropIfExists('sellers');
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('users');
         Schema::dropIfExists('marketplaces');
     }
 };
