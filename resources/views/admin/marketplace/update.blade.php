@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('index')
 
 @section('content')
 <form action="{{ route('admin.marketplace.store') }}" method="POST" class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
     @csrf
     <input type="hidden" name="marketplace_id" value="{{ $marketplace->id_marketplace }}">
     <div class="space-y-4">
-        <h2 class="text-base font-semibold leading-7 text-gray-900">Update Marketplace</h2>
+        <h1 class="text-base font-semibold leading-7 text-gray-900 text-center uppercase">Update Marketplace</h1>
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div class="sm:col-span-4">
                 <label for="country_code" class="block text-sm font-medium leading-6 text-gray-900">Код країни</label>

@@ -57,4 +57,9 @@ class User extends Authenticatable
             self::ROLE_SELLER => 'Продавець',
         ];
     }
+
+    public function isAdmin ()
+    {
+        return auth()->user()->id_role === User::ROLE_ADMIN;
+    }
 }

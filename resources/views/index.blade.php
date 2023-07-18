@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=in, initial-scale=1.0">
-    <title>Laravel study</title>
+    <title>Магазин Ларавела</title>
+    <link rel="icon" type="image/x-icon" href="../../img/logo.png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -12,10 +13,10 @@
     <header class="bg-white">
         <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
             <div class="flex lg:flex-1">
-                <a href="#" class="-m-1.5 p-1.5">
+                <a href="{{ route('index') }}" class="-m-1.5 p-1.5">
                     <span class="sr-only">Your Company</span>
-                    <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                        alt="">
+                    <img class="h-12 w-4 w-auto" src="../../img/logo.png"
+                        alt="Логотип">
                 </a>
             </div>
             <div class="flex lg:hidden">
@@ -176,17 +177,56 @@
 
                 {{-- <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Features</a> --}}
                 {{-- <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Marketplace</a> --}}
-                <a href="#" class="text-sm font-semibold leading-6 text-gray-900">In development</a>
+                {{-- <a href="#" class="text-sm font-semibold leading-6 text-gray-900">In development</a> --}}
+                @if (Auth::user() && Auth::user()->id_role === 0)
+                    <a href="{{route('admin.users')}}" class="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-all">Користувачі</a>
+                    <a href="{{route('admin.marketplaces')}}" class="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-all">Маркетплейси</a>
+                @endif
+
             </div>
             <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-                {{-- @if () --}}
-                    <a href="{{ route('seller.create') }}" class="text-sm font-semibold leading-6 text-gray-900 mr-4 hover:text-indigo-600 transition-all">Реєстрація <span
-                            aria-hidden="true">&uarr;</span></a>
-                    <a href="{{ route('seller.enter') }}" class="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-all">Вхід <span
-                            aria-hidden="true">&rarr;</span></a>
-                {{-- @else
+                @if (Auth::user())
+                    <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center text-sm font-semibold leading-6 text-gray-900 mr-4 hover:text-indigo-600 transition-all">
+                                    @if (Auth::user()->id_role === 0)
+                                        [ ADMIN ]&nbsp;
+                                    @endif
+                                    <div>{{ Auth::user()->name }}</div>
 
-                @endif --}}
+                                    <div class="ml-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('profile.edit')">
+                                    {{ __('Профіль') }}
+                                </x-dropdown-link>
+
+                                <!-- Authentication -->
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+
+                                    <x-dropdown-link :href="route('logout')"
+                                            onclick="event.preventDefault();
+                                                        this.closest('form').submit();">
+                                        {{ __('Вихід') }}
+                                    </x-dropdown-link>
+                                </form>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                @else
+                    <a href="{{ route('register') }}" class="text-sm font-semibold leading-6 text-gray-900 mr-4 hover:text-indigo-600 transition-all">Реєстрація <span
+                            aria-hidden="true">&uarr;</span></a>
+                    <a href="{{ route('login') }}" class="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-all">Вхід <span
+                            aria-hidden="true">&rarr;</span></a>
+                @endif
             </div>
         </nav>
         <!-- Mobile menu, show/hide based on menu open state. -->
@@ -268,6 +308,9 @@
     </header>
 
     <main>
+        @if (Gate::allows('admin'))
+            {{-- @dd("+") --}}
+        @endif
         @yield('content')
     </main>
 
